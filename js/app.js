@@ -556,22 +556,26 @@ function mapProductToMovie(product) {
     };
 }
 
+
+
 //API
 
 const apiRow = document.querySelector("#api-row");
 const apiLoading = document.querySelector("#api-loading");
 const apiError = document.querySelector("#api-error");
 
-fetch("https://dummyjson.com/products")
-    .then(function (response) {
+async function loadProducts() {
+    try {
+        apiLoading.style.display = "block";
+        apiError.textContent = "";
+
+        const response = await fetch("https://dummyjson.com/products");
+
         if (!response.ok) {
             throw new Error("HTTP error: " + response.status);
         }
 
-        return response.json();
-    })
-    .then(function (data) {
-        apiError.textContent = "";
+        const data = await response.json();
 
         if (data.products.length === 0) {
             apiLoading.style.display = "none";
@@ -585,9 +589,46 @@ fetch("https://dummyjson.com/products")
 
         movieCards = document.querySelectorAll(".content-card");
 
-    }).catch(function (error) {
-        console.error("Error fetching products:", error);
+        console.log(data);
+    } catch (error) {
+        console.error("Error:", error);
 
         apiLoading.style.display = "none";
         apiError.textContent = "Error loading products.";
-    });
+    }
+}
+
+loadProducts();
+
+
+
+// FETCH
+// fetch("https://dummyjson.com/products")
+//     .then(function (response) {
+//         if (!response.ok) {
+//             throw new Error("HTTP error: " + response.status);
+//         }
+
+//         return response.json();
+//     })
+//     .then(function (data) {
+//         apiError.textContent = "";
+
+//         if (data.products.length === 0) {
+//             apiLoading.style.display = "none";
+//             apiError.textContent = "No products available.";
+//             return;
+//         }
+
+//         apiLoading.style.display = "none";
+
+//         renderProducts(data.products);
+
+//         movieCards = document.querySelectorAll(".content-card");
+
+//     }).catch(function (error) {
+//         console.error("Error fetching products:", error);
+
+//         apiLoading.style.display = "none";
+//         apiError.textContent = "Error loading products.";
+//     });
