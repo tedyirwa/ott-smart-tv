@@ -540,19 +540,31 @@ function createProductCard(product) {
 
 //API
 
+const apiRow = document.querySelector("#api-row");
+const apiLoading = document.querySelector("#api-loading");
+const apiError = document.querySelector("#api-error");
+
 fetch("https://dummyjson.com/products")
     .then(function (response) {
+        if (!response.ok) {
+            throw new Error("HTTP error: " + response.status);
+        }
+
         return response.json();
     })
     .then(function (data) {
-        const apiRow = document.querySelector("#api-row");
+        apiError.textContent = "";
 
-        const apiLoading = document.querySelector("#api-loading");
-
+        if (data.products.length === 0) {
+            apiLoading.style.display = "none";
+            apiError.textContent = "No products available.";
+            return;
+        }
+        
         apiLoading.style.display = "none";
 
         console.log("createProductCard:", createProductCard(data.products[0]));
-        
+
         data.products.forEach(function (product) {
 
             const card = createProductCard(product);
@@ -565,6 +577,7 @@ fetch("https://dummyjson.com/products")
 
     }).catch(function (error) {
         console.error("Error fetching products:", error);
-        const apiLoading = document.querySelector("#api-loading");
-        apiLoading.textContent = "Error loading products.";
+
+        apiLoading.style.display = "none";
+        apiError.textContent = "Error loading products.";
     });
