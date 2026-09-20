@@ -100,18 +100,31 @@ body {
 
 .content-card {
     width: 220px;
+    height: 130px;
+    flex-shrink: 0;
+}
+
+.card-title {
+    margin-top: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .poster {
     height: 130px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: #222;
-
     font-size: 18px;
+    overflow: hidden;
+}
+
+.poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .progress-container {

@@ -266,7 +266,7 @@ let focusedColumn = 0;
 // ============================================================
 
 // Mengambil semua movie card.
-const movieCards = document.querySelectorAll(".content-card");
+let movieCards = document.querySelectorAll(".content-card");
 
 // Mengambil semua row yang berisi movie card.
 const movieRows = document.querySelectorAll(".content-row");
@@ -428,7 +428,7 @@ document.addEventListener("keydown", function (event) {
     if (event.code === "ArrowUp") {
 
         let previousRowIndex = focusedRow - 1;
-        
+
         while (previousRowIndex >= 0) {
             const previousRowCards = movieRows[previousRowIndex].querySelectorAll(".content-card")
 
@@ -442,7 +442,7 @@ document.addEventListener("keydown", function (event) {
             previousRowCards[targetColumn].focus();
 
             break;
-            
+
         }
         // Pastikan belum berada di row paling atas.
         // if (previousRowIndex >= 0) {
@@ -509,3 +509,62 @@ document.addEventListener("keydown", function (event) {
     }
 
 });
+
+
+function createProductCard(product) {
+    //Card
+    const card = document.createElement("div");
+    card.className = "content-card";
+    card.tabIndex = 0;
+
+    //Image Card
+    const poster = document.createElement("div");
+    poster.className = "poster";
+
+    const image = document.createElement("img");
+    image.src = product.thumbnail;
+
+    //Title Card
+    const title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = product.title;
+
+    poster.appendChild(image);
+
+    card.appendChild(poster);
+    card.appendChild(title);
+
+    return card;
+}
+
+
+//API
+
+fetch("https://dummyjson.com/products")
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        const apiRow = document.querySelector("#api-row");
+
+        const apiLoading = document.querySelector("#api-loading");
+
+        apiLoading.style.display = "none";
+
+        console.log("createProductCard:", createProductCard(data.products[0]));
+        
+        data.products.forEach(function (product) {
+
+            const card = createProductCard(product);
+
+            apiRow.appendChild(card);
+
+        });
+
+        movieCards = document.querySelectorAll(".content-card");
+
+    }).catch(function (error) {
+        console.error("Error fetching products:", error);
+        const apiLoading = document.querySelector("#api-loading");
+        apiLoading.textContent = "Error loading products.";
+    });
