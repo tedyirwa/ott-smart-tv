@@ -1,0 +1,163 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    background: #111;
+    color: #fff;
+}
+
+.header {
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 50px;
+
+    gap: 60px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.navigation {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-item {
+    border: none;
+    background: none;
+
+    color: #aaa;
+
+    font-size: 18px;
+
+    padding: 10px 5px;
+}
+
+.hero {
+    min-height: 700px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 60px 80px;
+}
+
+.hero-content {
+    max-width: 600px;
+}
+
+.label {
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin: 15px 0;
+}
+
+.description {
+    font-size: 18px;
+    color: #bbb;
+
+    line-height: 1.5;
+}
+
+.play-button {
+    margin-top: 20px;
+
+    padding: 14px 30px;
+
+    border: none;
+
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.content-section {
+    padding: 20px 50px;
+}
+
+.content-section h2 {
+    font-size: 24px;
+}
+
+.content-row {
+    display: flex;
+    gap: 20px;
+}
+
+.content-card {
+    width: 220px;
+}
+
+.poster {
+    height: 130px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #222;
+
+    font-size: 18px;
+}
+
+.progress-container {
+    width: 800px;
+    height: 8px;
+
+    background: #444;
+
+    margin-top: 10px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+
+    background: #fff;
+}
+
+.video-container {
+    width: 800px;
+    margin-top: 20px;
+}
+
+.video-player {
+    display: block;
+    width: 800px;
+}
+
+.progress-container {
+    width: 800px;
+    height: 8px;
+
+    background: #444;
+
+    margin-top: 10px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+
+    background: #fff;
+}
+
+
+.content-card:focus {
+    outline: 3px solid white;
+    outline-offset: 4px;
+}
