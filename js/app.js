@@ -537,6 +537,15 @@ function createProductCard(product) {
     return card;
 }
 
+function renderProducts(products) {
+    apiRow.innerHTML = "";
+    
+    products.forEach(function (product) {
+        const card = createProductCard(product);
+        apiRow.appendChild(card);
+    });
+}
+
 
 //API
 
@@ -560,18 +569,10 @@ fetch("https://dummyjson.com/products")
             apiError.textContent = "No products available.";
             return;
         }
-        
+
         apiLoading.style.display = "none";
 
-        console.log("createProductCard:", createProductCard(data.products[0]));
-
-        data.products.forEach(function (product) {
-
-            const card = createProductCard(product);
-
-            apiRow.appendChild(card);
-
-        });
+        renderProducts(data.products);
 
         movieCards = document.querySelectorAll(".content-card");
 
