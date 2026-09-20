@@ -511,7 +511,7 @@ document.addEventListener("keydown", function (event) {
 });
 
 
-function createProductCard(product) {
+function createProductCard(movie) {
     //Card
     const card = document.createElement("div");
     card.className = "content-card";
@@ -522,12 +522,12 @@ function createProductCard(product) {
     poster.className = "poster";
 
     const image = document.createElement("img");
-    image.src = product.thumbnail;
+    image.src = movie.thumbnail;
 
     //Title Card
     const title = document.createElement("div");
     title.className = "card-title";
-    title.textContent = product.title;
+    title.textContent = movie.title;
 
     poster.appendChild(image);
 
@@ -539,13 +539,22 @@ function createProductCard(product) {
 
 function renderProducts(products) {
     apiRow.innerHTML = "";
-    
+
     products.forEach(function (product) {
-        const card = createProductCard(product);
+        const movie = mapProductToMovie(product);
+        const card = createProductCard(movie);
         apiRow.appendChild(card);
     });
 }
 
+function mapProductToMovie(product) {
+    return {
+        id: product.id,
+        title: product.title,
+        thumbnail: product.thumbnail,
+        description: product.description
+    };
+}
 
 //API
 
