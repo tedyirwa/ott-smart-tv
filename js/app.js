@@ -537,12 +537,13 @@ function createProductCard(movie) {
     return card;
 }
 
-function renderProducts(products) {
+function renderProducts(movies) {
     apiRow.innerHTML = "";
 
-    products.forEach(function (product) {
-        const movie = mapProductToMovie(product);
+    movies.forEach(function (movieData) {
+        const movie = mapTmdbMovieToMovie(movieData);
         const card = createProductCard(movie);
+
         apiRow.appendChild(card);
     });
 }
@@ -556,50 +557,101 @@ function mapProductToMovie(product) {
     };
 }
 
+function mapTmdbMovieToMovie(movie) {
+    return {
+        id: movie.id,
+        title: movie.title,
+        thumbnail: TMDB_CONFIG.imageBaseUrl + movie.poster_path,
+        description: movie.overview
+    };
+}
 
 
 //API
-
 const apiRow = document.querySelector("#api-row");
 const apiLoading = document.querySelector("#api-loading");
 const apiError = document.querySelector("#api-error");
 
-async function loadProducts() {
+async function loadMovies() {
     try {
         apiLoading.style.display = "block";
         apiError.textContent = "";
 
-        const response = await fetch("https://dummyjson.com/products");
+        const response = await fetch(
+            TMDB_CONFIG.baseUrl + "/movie/popular",
+            {
+                headers: {
+                    Authorization: "Bearer " + TMDB_CONFIG.token,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
         if (!response.ok) {
-            throw new Error("HTTP error: " + response.status);
+            throw new Error("TMDB HTTP error: " + response.status);
         }
 
         const data = await response.json();
 
-        if (data.products.length === 0) {
+        if (data.results.length === 0) {
             apiLoading.style.display = "none";
-            apiError.textContent = "No products available.";
+            apiError.textContent = "No movies available.";
             return;
         }
 
         apiLoading.style.display = "none";
 
-        renderProducts(data.products);
+        renderProducts(data.results);
 
         movieCards = document.querySelectorAll(".content-card");
 
-        console.log(data);
+        const movie = mapTmdbMovieToMovie(data.results[0]);
+        console.log("Mapped movie:", movie);
+        console.log("First movie:", data.results[0]);
+        console.log("TMDB response:", data);
+        console.log("Movies:", data.results);
     } catch (error) {
-        console.error("Error:", error);
-
-        apiLoading.style.display = "none";
-        apiError.textContent = "Error loading products.";
+        console.error("TMDB error:", error);
     }
 }
 
-loadProducts();
+loadMovies();
 
+// async function loadProducts() {
+//     try {
+//         apiLoading.style.display = "block";
+//         apiError.textContent = "";
+
+//         const response = await fetch("https://dummyjson.com/products");
+
+//         if (!response.ok) {
+//             throw new Error("HTTP error: " + response.status);
+//         }
+
+//         const data = await response.json();
+
+//         if (data.products.length === 0) {
+//             apiLoading.style.display = "none";
+//             apiError.textContent = "No products available.";
+//             return;
+//         }
+
+//         apiLoading.style.display = "none";
+
+//         renderProducts(data.products);
+
+//         movieCards = document.querySelectorAll(".content-card");
+
+//         console.log(data);
+//     } catch (error) {
+//         console.error("Error:", error);
+
+//         apiLoading.style.display = "none";
+//         apiError.textContent = "Error loading products.";
+//     }
+// }
+
+// loadProducts();
 
 
 // FETCH
