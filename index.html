@@ -43,6 +43,7 @@
 
     <main>
 
+        <!-- Hero / Featured Movie -->
         <section class="hero">
 
             <div class="hero-content">
@@ -65,6 +66,7 @@
 
                 <p class="player-status"></p>
 
+                <!-- Existing custom video player -->
                 <div class="video-container">
 
                     <video class="video-player" width="800">
@@ -72,12 +74,15 @@
                     </video>
 
                     <div class="progress-container">
+
                         <div class="progress-bar"></div>
+
                         <div class="player-time">
                             <span class="current-time">00:00</span>
                             /
                             <span class="duration">00:00</span>
                         </div>
+
                     </div>
 
                 </div>
@@ -87,6 +92,7 @@
         </section>
 
 
+        <!-- Continue Watching -->
         <section class="content-section">
 
             <h2>
@@ -117,16 +123,26 @@
 
         </section>
 
-        <section class="content-section">
-            <h2>API Products</h2>
 
-            <div id="api-loading">Loading...</div>
+        <!-- TMDB Movies -->
+        <section class="content-section">
+
+            <h2>
+                TMDB Movies
+            </h2>
+
+            <div id="api-loading">
+                Loading...
+            </div>
+
             <div id="api-error"></div>
 
             <div class="content-row" id="api-row"></div>
+
         </section>
 
 
+        <!-- Popular -->
         <section class="content-section">
 
             <h2>
@@ -169,10 +185,12 @@
 
         </section>
 
+
+        <!-- Comedy -->
         <section class="content-section">
 
             <h2>
-                Comedi
+                Comedy
             </h2>
 
             <div class="content-row">
@@ -187,6 +205,8 @@
 
         </section>
 
+
+        <!-- Romantic -->
         <section class="content-section">
 
             <h2>
@@ -195,12 +215,12 @@
 
             <div class="content-row">
 
-
-
             </div>
 
         </section>
 
+
+        <!-- Horror -->
         <section class="content-section">
 
             <h2>
@@ -231,6 +251,8 @@
 
         </section>
 
+
+        <!-- Action -->
         <section class="content-section">
 
             <h2>
@@ -239,7 +261,6 @@
 
             <div class="content-row">
 
-
             </div>
 
         </section>
@@ -247,6 +268,7 @@
     </main>
 
 
+    <!-- Configuration must load before app.js -->
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
 
