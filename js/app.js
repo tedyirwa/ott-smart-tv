@@ -558,26 +558,23 @@ function renderProducts(movies) {
     apiRow.appendChild(fragment);
 }
 
-function mapProductToMovie(product) {
-    return {
-        id: product.id,
-        title: product.title,
-        thumbnail: product.thumbnail,
-        description: product.description
-    };
-}
-
 function mapTmdbMovieToMovie(movie) {
     return {
         id: movie.id,
         title: movie.title,
-        thumbnail:
-            TMDB_CONFIG.imageBaseUrl +
-            "/" +
-            TMDB_CONFIG.posterSmall +
-            movie.poster_path,
+        thumbnail: getPosterUrl(movie.poster_path),
         description: movie.overview
     };
+}
+
+function getPosterUrl(posterPath) {
+    return (
+        TMDB_CONFIG.imageBaseUrl +
+        "/" +
+        TMDB_CONFIG.posterSmall +
+        posterPath
+    );
+
 }
 
 
