@@ -322,25 +322,31 @@ function setApiState(state, message = "") {
     }
 }
 
+async function fetchPopularMovies() {
+    const response = await fetch(
+        TMDB_CONFIG.baseUrl + "/movie/popular",
+        {
+            headers: {
+                Authorization: "Bearer " + TMDB_CONFIG.token,
+                "Content-Type": "application/json"
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("HTTP_" + response.status);
+    }
+
+    const data = await response.json();
+
+    return data;
+}
+
 async function loadMovies(retryCount = 0) {
     try {
         setApiState("loading");
 
-        const response = await fetch(
-            TMDB_CONFIG.baseUrl + "/movie/popular",
-            {
-                headers: {
-                    Authorization: "Bearer " + TMDB_CONFIG.token,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("HTTP_" + response.status);
-        }
-
-        const data = await response.json();
+        const data = await fetchPopularMovies();
 
         if (data.results.length === 0) {
             setApiState("success", "No movies available.");
