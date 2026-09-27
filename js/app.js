@@ -331,7 +331,17 @@ function setApiState(state, message = "") {
     }
 }
 
+let popularMoviesCache = null;
+let popularMoviesCacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000;
+
 async function fetchPopularMovies() {
+    const cacheAge = Date.now() - popularMoviesCacheTime;
+
+    if (popularMoviesCache && cacheAge < CACHE_TTL) {
+        return popularMoviesCache;
+    }
+
     const response = await fetch(
         TMDB_CONFIG.baseUrl + "/movie/popular",
         {
@@ -347,6 +357,9 @@ async function fetchPopularMovies() {
     }
 
     const data = await response.json();
+
+    popularMoviesCache = data;
+    popularMoviesCacheTime = Date.now();
 
     return data;
 }
