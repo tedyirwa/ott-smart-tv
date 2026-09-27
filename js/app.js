@@ -311,11 +311,20 @@ const apiRow = document.querySelector("#api-row");
 const apiLoading = document.querySelector("#api-loading");
 const apiError = document.querySelector("#api-error");
 
+function setApiState(state, message = "") {
+    apiLoading.style.display =
+        state === "loading" ? "block" : "none";
+
+    apiError.textContent = message;
+
+    if (state === "loading") {
+        apiRow.innerHTML = "";
+    }
+}
 
 async function loadMovies(retryCount = 0) {
     try {
-        apiLoading.style.display = "block";
-        apiError.textContent = "";
+        setApiState("loading");
 
         const response = await fetch(
             TMDB_CONFIG.baseUrl + "/movie/popular",
@@ -334,13 +343,12 @@ async function loadMovies(retryCount = 0) {
         const data = await response.json();
 
         if (data.results.length === 0) {
-            apiLoading.style.display = "none";
-            apiError.textContent = "No movies available.";
+            setApiState("success", "No movies available.");
 
             return;
         }
 
-        apiLoading.style.display = "none";
+        setApiState("success");
 
         renderProducts(data.results);
 
@@ -375,14 +383,16 @@ async function loadMovies(retryCount = 0) {
 
         console.error("TMDB error:", error);
 
-        apiLoading.style.display = "none";
-
         if (error.message.startsWith("HTTP_")) {
-            apiError.textContent =
-                "Movie service is currently unavailable.";
+            setApiState(
+                "error",
+                "Movie service is currently unavailable."
+            );
         } else {
-            apiError.textContent =
-                "Unable to connect. Please check your internet connection.";
+            setApiState(
+                "error",
+                "Unable to connect. Please check your internet connection."
+            );
         }
     }
 }
