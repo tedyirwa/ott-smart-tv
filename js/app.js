@@ -526,7 +526,9 @@ function createProductCard(movie) {
     image.loading = "lazy";
     image.alt = movie.title;
 
-    image.src = movie.thumbnail;
+    if (movie.thumbnail) {
+        image.src = movie.thumbnail;
+    }
 
     //Title Card
     const title = document.createElement("div");
@@ -568,6 +570,11 @@ function mapTmdbMovieToMovie(movie) {
 }
 
 function getPosterUrl(posterPath) {
+
+    if (!posterPath) {
+        return null;
+    }
+
     return (
         TMDB_CONFIG.imageBaseUrl +
         "/" +
@@ -576,7 +583,6 @@ function getPosterUrl(posterPath) {
     );
 
 }
-
 
 //API
 const apiRow = document.querySelector("#api-row");
