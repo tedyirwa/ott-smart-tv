@@ -4,23 +4,19 @@
 
 body {
     margin: 0;
-    min-height: 100vh;
-
-    font-family: Arial, sans-serif;
-
     background: #111;
     color: #fff;
+    font-family: Arial, sans-serif;
 }
 
 .header {
-    height: 80px;
-
     display: flex;
     align-items: center;
+    gap: 40px;
 
-    padding: 0 50px;
+    padding: 20px 40px;
 
-    gap: 60px;
+    background: #181818;
 }
 
 .logo {
@@ -30,147 +26,235 @@ body {
 
 .navigation {
     display: flex;
-    gap: 30px;
+    gap: 20px;
 }
 
 .nav-item {
+    padding: 10px 20px;
+
     border: none;
-    background: none;
+    border-radius: 4px;
 
-    color: #aaa;
+    background: transparent;
+    color: #fff;
 
-    font-size: 18px;
+    font-size: 16px;
+}
 
-    padding: 10px 5px;
+.nav-item:focus {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+
+/* Hero */
+
+main {
+    padding-bottom: 60px;
 }
 
 .hero {
-    min-height: 700px;
+    padding: 60px 40px;
 
-    display: flex;
-    align-items: center;
-
-    padding: 60px 80px;
+    background: #222;
 }
 
 .hero-content {
-    max-width: 600px;
+    max-width: 900px;
 }
 
 .label {
+    margin: 0 0 10px;
+
     font-size: 14px;
-    letter-spacing: 3px;
+    font-weight: bold;
 }
 
 .hero h1 {
+    margin: 0 0 15px;
+
     font-size: 48px;
-    margin: 15px 0;
 }
 
 .description {
-    font-size: 18px;
-    color: #bbb;
+    margin-bottom: 25px;
 
-    line-height: 1.5;
+    font-size: 18px;
 }
 
-.play-button {
-    margin-top: 20px;
 
-    padding: 14px 30px;
+.play-button {
+    padding: 12px 30px;
 
     border: none;
+    border-radius: 4px;
+
+    background: #fff;
+    color: #111;
 
     font-size: 16px;
     font-weight: bold;
 }
 
+.play-button:focus {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+.player-status {
+    min-height: 20px;
+
+    margin: 15px 0;
+}
+
+
+/* Video Player */
+
+.video-container {
+    width: 800px;
+    max-width: 100%;
+
+    margin-top: 20px;
+}
+
+.video-player {
+    display: block;
+
+    width: 100%;
+    height: auto;
+}
+
+.progress-container {
+    position: relative;
+
+    width: 100%;
+    height: 8px;
+
+    margin-top: 10px;
+
+    background: #444;
+
+    cursor: pointer;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+
+    background: #fff;
+}
+
+.player-time {
+    display: flex;
+    gap: 5px;
+
+    margin-top: 8px;
+
+    font-size: 14px;
+}
+
+
+/* Movie Sections */
+
 .content-section {
-    padding: 20px 50px;
+    padding: 30px 40px 0;
 }
 
 .content-section h2 {
+    margin: 0 0 20px;
+
     font-size: 24px;
 }
+
+
+/* Movie Row */
 
 .content-row {
     display: flex;
     gap: 20px;
+
+    overflow-x: auto;
+
+    padding: 10px 4px 10px;
+
+    scrollbar-width: none;
 }
+
+.content-row::-webkit-scrollbar {
+    display: none;
+}
+
+/* Movie Card */
 
 .content-card {
-    width: 220px;
-    height: 130px;
-    flex-shrink: 0;
+    flex: 0 0 180px;
+
+    min-height: 260px;
+
+    border-radius: 6px;
+
+    background: #222;
+
+    overflow: hidden;
+
+    cursor: pointer;
 }
 
-.card-title {
-    margin-top: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.content-card:focus {
+    outline: 4px solid #fff;
+    outline-offset: 2px;
 }
+
+
+/* Poster */
 
 .poster {
-    height: 130px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #222;
-    font-size: 18px;
+
+    width: 100%;
+    height: 220px;
+
+    background: #333;
+
     overflow: hidden;
 }
 
 .poster img {
     width: 100%;
     height: 100%;
+
     object-fit: cover;
 }
 
-.progress-container {
-    width: 800px;
-    height: 8px;
 
-    background: #444;
+/* Movie Title */
 
-    margin-top: 10px;
-}
+.card-title {
+    padding: 10px;
 
-.progress-bar {
-    width: 0%;
-    height: 100%;
+    font-size: 14px;
+    font-weight: bold;
 
-    background: #fff;
-}
-
-.video-container {
-    width: 800px;
-    margin-top: 20px;
-}
-
-.video-player {
-    display: block;
-    width: 800px;
-}
-
-.progress-container {
-    width: 800px;
-    height: 8px;
-
-    background: #444;
-
-    margin-top: 10px;
-}
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-
-    background: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
-.content-card:focus {
-    outline: 3px solid white;
-    outline-offset: 4px;
+/* API State */
+
+.api-loading {
+    margin-bottom: 15px;
+
+    font-size: 14px;
+}
+
+.api-error {
+    min-height: 20px;
+
+    margin-bottom: 15px;
+
+    font-size: 14px;
 }

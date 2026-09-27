@@ -116,8 +116,6 @@ let focusedColumn = 0;
 let movieCards = document.querySelectorAll(".content-card");
 let movieRows = document.querySelectorAll(".content-row");
 
-movieCards[0].focus();
-
 document.addEventListener("focusin", function (event) {
 
     console.log("Focused element:", event.target);
@@ -230,7 +228,7 @@ document.addEventListener("keydown", function (event) {
 });
 
 
-function createProductCard(movie) {
+function createMovieCard(movie) {
     const card = document.createElement("div");
 
     card.className = "content-card";
@@ -267,8 +265,8 @@ function createProductCard(movie) {
 }
 
 
-function renderProducts(movies) {
-    apiRow.innerHTML = "";
+function renderPopularMovies(movies) {
+    popularMoviesRow.innerHTML = "";
 
     const fragment = document.createDocumentFragment();
 
@@ -279,12 +277,12 @@ function renderProducts(movies) {
             return;
         }
 
-        const card = createProductCard(movie);
+        const card = createMovieCard(movie);
 
         fragment.appendChild(card);
     });
 
-    apiRow.appendChild(fragment);
+    popularMoviesRow.appendChild(fragment);
 }
 
 
@@ -316,36 +314,57 @@ function getPosterUrl(posterPath) {
 }
 
 
-const apiRow = document.querySelector("#api-row");
-const apiLoading = document.querySelector("#api-loading");
-const apiError = document.querySelector("#api-error");
+const popularMoviesRow =
+    document.querySelector("#popular-movies-row");
 
-function setApiState(state, message = "") {
-    apiLoading.style.display =
+const popularMoviesLoading =
+    document.querySelector("#popular-movies-loading");
+
+const popularMoviesError =
+    document.querySelector("#popular-movies-error");
+
+
+function setPopularMoviesState(state, message = "") {
+    console.log("Setting popular movies state:", state, message);
+
+    popularMoviesLoading.style.display =
         state === "loading" ? "block" : "none";
 
-    apiError.textContent = message;
+    console.log(
+        "popularMoviesLoading.style.display:",
+        popularMoviesLoading.style.display
+    );
+
+    popularMoviesError.textContent = message;
 
     if (state === "loading") {
-        apiRow.innerHTML = "";
+        popularMoviesRow.innerHTML = "";
     }
 }
 
+
 let popularMoviesCache = null;
 let popularMoviesCacheTime = 0;
+
 const CACHE_TTL = 5 * 60 * 1000;
 
 let popularMoviesRequest = null;
 
-async function fetchPopularMovies() {
-    const cacheAge = Date.now() - popularMoviesCacheTime;
 
-    if (popularMoviesCache && cacheAge < CACHE_TTL) {
+async function fetchPopularMovies() {
+    const cacheAge =
+        Date.now() - popularMoviesCacheTime;
+
+    if (
+        popularMoviesCache &&
+        cacheAge < CACHE_TTL
+    ) {
         return popularMoviesCache;
     }
 
     if (popularMoviesRequest) {
         console.log("Using existing popular movies request");
+
         return popularMoviesRequest;
     }
 
@@ -372,42 +391,67 @@ async function fetchPopularMovies() {
         popularMoviesCacheTime = Date.now();
 
         return data;
+
     } finally {
         popularMoviesRequest = null;
     }
 }
 
-async function loadMovies(retryCount = 0) {
+
+async function loadPopularMovies(retryCount = 0) {
+
     try {
-        setApiState("loading");
+        setPopularMoviesState("loading");
+
+        console.log("Fetching popular movies from TMDB...");
 
         const data = await fetchPopularMovies();
 
         if (data.results.length === 0) {
-            setApiState("success", "No movies available.");
+            setPopularMoviesState(
+                "success",
+                "No movies available."
+            );
 
             return;
         }
 
-        setApiState("success");
+        console.log(
+            "TMDB data fetched:",
+            data.results.length,
+            "movies"
+        );
 
-        renderProducts(data.results);
+        setPopularMoviesState("success");
 
-        movieCards = document.querySelectorAll(".content-card");
-        movieRows = document.querySelectorAll(".content-row");
+        renderPopularMovies(data.results);
 
-        const movie = mapTmdbMovieToMovie(data.results[0]);
+        movieCards =
+            document.querySelectorAll(".content-card");
+
+        movieRows =
+            document.querySelectorAll(".content-row");
+
+        const movie =
+            mapTmdbMovieToMovie(data.results[0]);
 
         if (movieCards.length > 0) {
             movieCards[0].focus();
         }
 
-        console.log("TMDB movies loaded:", data.results.length);
+        console.log(
+            "TMDB movies loaded:",
+            data.results.length
+        );
+
         console.log("First movie:", movie);
 
     } catch (error) {
+
         if (retryCount < 2) {
-            const delay = (retryCount + 1) * 1000;
+
+            const delay =
+                (retryCount + 1) * 1000;
 
             console.log(
                 "Retrying TMDB request in",
@@ -419,18 +463,23 @@ async function loadMovies(retryCount = 0) {
                 setTimeout(resolve, delay);
             });
 
-            return loadMovies(retryCount + 1);
+            return loadPopularMovies(
+                retryCount + 1
+            );
         }
 
         console.error("TMDB error:", error);
 
         if (error.message.startsWith("HTTP_")) {
-            setApiState(
+
+            setPopularMoviesState(
                 "error",
                 "Movie service is currently unavailable."
             );
+
         } else {
-            setApiState(
+
+            setPopularMoviesState(
                 "error",
                 "Unable to connect. Please check your internet connection."
             );
@@ -438,7 +487,8 @@ async function loadMovies(retryCount = 0) {
     }
 }
 
-loadMovies();
+
+loadPopularMovies();
 
 
 // async function loadProducts() {
