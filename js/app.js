@@ -335,6 +335,8 @@ let popularMoviesCache = null;
 let popularMoviesCacheTime = 0;
 const CACHE_TTL = 5 * 60 * 1000;
 
+let popularMoviesRequest = null;
+
 async function fetchPopularMovies() {
     const cacheAge = Date.now() - popularMoviesCacheTime;
 
@@ -342,7 +344,12 @@ async function fetchPopularMovies() {
         return popularMoviesCache;
     }
 
-    const response = await fetch(
+    if (popularMoviesRequest) {
+        console.log("Using existing popular movies request");
+        return popularMoviesRequest;
+    }
+
+    popularMoviesRequest = fetch(
         TMDB_CONFIG.baseUrl + "/movie/popular",
         {
             headers: {
@@ -352,16 +359,22 @@ async function fetchPopularMovies() {
         }
     );
 
-    if (!response.ok) {
-        throw new Error("HTTP_" + response.status);
+    try {
+        const response = await popularMoviesRequest;
+
+        if (!response.ok) {
+            throw new Error("HTTP_" + response.status);
+        }
+
+        const data = await response.json();
+
+        popularMoviesCache = data;
+        popularMoviesCacheTime = Date.now();
+
+        return data;
+    } finally {
+        popularMoviesRequest = null;
     }
-
-    const data = await response.json();
-
-    popularMoviesCache = data;
-    popularMoviesCacheTime = Date.now();
-
-    return data;
 }
 
 async function loadMovies(retryCount = 0) {
