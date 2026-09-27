@@ -10,92 +10,92 @@ const durationElement = document.querySelector(".duration");
 let isPlaying = false;
 
 playButton.addEventListener("click", function () {
-     if (videoPlayer.paused) {
-          videoPlayer.play();
-     } else {
-          videoPlayer.pause();
-     }
+    if (videoPlayer.paused) {
+        videoPlayer.play();
+    } else {
+        videoPlayer.pause();
+    }
 });
 
 videoPlayer.addEventListener("play", function () {
-     isPlaying = true;
+    isPlaying = true;
 
-     playButton.textContent = "PAUSE";
-     playerStatus.textContent = "Video is playing";
+    playButton.textContent = "PAUSE";
+    playerStatus.textContent = "Video is playing";
 
-     console.log("Video started playing");
+    console.log("Video started playing");
 });
 
 videoPlayer.addEventListener("pause", function () {
-     isPlaying = false;
+    isPlaying = false;
 
-     playButton.textContent = "PLAY";
-     playerStatus.textContent = "Video is paused";
+    playButton.textContent = "PLAY";
+    playerStatus.textContent = "Video is paused";
 
-     console.log("Video paused");
+    console.log("Video paused");
 });
 
 videoPlayer.addEventListener("waiting", function () {
-     playerStatus.textContent = "Buffering...";
+    playerStatus.textContent = "Buffering...";
 
-     console.log("Video is buffering");
+    console.log("Video is buffering");
 });
 
 videoPlayer.addEventListener("ended", function () {
-     isPlaying = false;
+    isPlaying = false;
 
-     playButton.textContent = "PLAY";
-     playerStatus.textContent = "Video finished";
+    playButton.textContent = "PLAY";
+    playerStatus.textContent = "Video finished";
 
-     console.log("Video ended");
+    console.log("Video ended");
 });
 
 function formatTime(seconds) {
-     const minutes = Math.floor(seconds / 60);
-     const remainingSeconds = Math.floor(seconds % 60);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
 
-     return String(minutes).padStart(2, "0") + ":" + String(remainingSeconds).padStart(2, "0");
+    return String(minutes).padStart(2, "0") + ":" + String(remainingSeconds).padStart(2, "0");
 }
 
 videoPlayer.addEventListener("timeupdate", function () {
-     const currentTime = videoPlayer.currentTime;
-     const duration = videoPlayer.duration;
+    const currentTime = videoPlayer.currentTime;
+    const duration = videoPlayer.duration;
 
-     if (!Number.isFinite(duration)) {
-          return;
-     }
+    if (!Number.isFinite(duration)) {
+        return;
+    }
 
-     const progress = (currentTime / duration) * 100;
+    const progress = (currentTime / duration) * 100;
 
-     progressBar.style.width = progress + "%";
-     currentTimeElement.textContent = formatTime(currentTime);
+    progressBar.style.width = progress + "%";
+    currentTimeElement.textContent = formatTime(currentTime);
 });
 
 videoPlayer.addEventListener("loadedmetadata", function () {
-     durationElement.textContent = formatTime(videoPlayer.duration);
+    durationElement.textContent = formatTime(videoPlayer.duration);
 });
 
 videoPlayer.addEventListener("error", function () {
-     playerStatus.textContent = "Video error";
+    playerStatus.textContent = "Video error";
 
-     console.error("Video playback error");
+    console.error("Video playback error");
 
-     if (videoPlayer.error) {
-          console.error("Error code:", videoPlayer.error.code);
-          console.error("Error message:", videoPlayer.error.message);
-     }
+    if (videoPlayer.error) {
+        console.error("Error code:", videoPlayer.error.code);
+        console.error("Error message:", videoPlayer.error.message);
+    }
 });
 
 progressContainer.addEventListener("click", function (event) {
-     const rect = progressContainer.getBoundingClientRect();
+    const rect = progressContainer.getBoundingClientRect();
 
-     const clickPosition = event.clientX - rect.left;
+    const clickPosition = event.clientX - rect.left;
 
-     const clickPercentage = (clickPosition / rect.width) * 100;
+    const clickPercentage = (clickPosition / rect.width) * 100;
 
-     const seekTime = (clickPercentage / 100) * videoPlayer.duration;
+    const seekTime = (clickPercentage / 100) * videoPlayer.duration;
 
-     videoPlayer.currentTime = seekTime;
+    videoPlayer.currentTime = seekTime;
 });
 
 let focusedIndex = 0;
@@ -106,176 +106,176 @@ let movieCards = document.querySelectorAll(".content-card");
 let movieRows = document.querySelectorAll(".content-row");
 
 document.addEventListener("focusin", function (event) {
-     console.log("Focused element:", event.target);
+    console.log("Focused element:", event.target);
 
-     movieCards.forEach(function (card, index) {
-          if (card === document.activeElement) {
-               focusedIndex = index;
-          }
-     });
+    movieCards.forEach(function (card, index) {
+        if (card === document.activeElement) {
+            focusedIndex = index;
+        }
+    });
 
-     movieRows.forEach(function (row, rowIndex) {
-          const rowCards = row.querySelectorAll(".content-card");
+    movieRows.forEach(function (row, rowIndex) {
+        const rowCards = row.querySelectorAll(".content-card");
 
-          rowCards.forEach(function (card, columnIndex) {
-               if (card === document.activeElement) {
-                    focusedRow = rowIndex;
-                    focusedColumn = columnIndex;
-               }
-          });
-     });
+        rowCards.forEach(function (card, columnIndex) {
+            if (card === document.activeElement) {
+                focusedRow = rowIndex;
+                focusedColumn = columnIndex;
+            }
+        });
+    });
 
-     console.log("Focused row:", focusedRow);
-     console.log("Focused column:", focusedColumn);
+    console.log("Focused row:", focusedRow);
+    console.log("Focused column:", focusedColumn);
 });
 
 document.addEventListener("keydown", function (event) {
-     if (event.code === "Space") {
-          if (videoPlayer.paused) {
-               videoPlayer.play();
-          } else {
-               videoPlayer.pause();
-          }
-     }
+    if (event.code === "Space") {
+        if (videoPlayer.paused) {
+            videoPlayer.play();
+        } else {
+            videoPlayer.pause();
+        }
+    }
 
-     if (event.code === "ArrowRight") {
-          const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+    if (event.code === "ArrowRight") {
+        const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
 
-          if (focusedColumn < rowCards.length - 1) {
-               rowCards[focusedColumn + 1].focus();
-          }
-     }
+        if (focusedColumn < rowCards.length - 1) {
+            rowCards[focusedColumn + 1].focus();
+        }
+    }
 
-     if (event.code === "ArrowLeft") {
-          const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+    if (event.code === "ArrowLeft") {
+        const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
 
-          if (focusedColumn > 0) {
-               rowCards[focusedColumn - 1].focus();
-          }
-     }
+        if (focusedColumn > 0) {
+            rowCards[focusedColumn - 1].focus();
+        }
+    }
 
-     if (event.code === "ArrowUp") {
-          let previousRowIndex = focusedRow - 1;
+    if (event.code === "ArrowUp") {
+        let previousRowIndex = focusedRow - 1;
 
-          while (previousRowIndex >= 0) {
-               const previousRowCards = movieRows[previousRowIndex].querySelectorAll(".content-card");
+        while (previousRowIndex >= 0) {
+            const previousRowCards = movieRows[previousRowIndex].querySelectorAll(".content-card");
 
-               if (previousRowCards.length === 0) {
-                    previousRowIndex--;
-                    continue;
-               }
+            if (previousRowCards.length === 0) {
+                previousRowIndex--;
+                continue;
+            }
 
-               const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
+            const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
 
-               previousRowCards[targetColumn].focus();
+            previousRowCards[targetColumn].focus();
 
-               break;
-          }
+            break;
+        }
 
-          // if (previousRowIndex >= 0) {
-          //     const previousRowCards =
-          //         movieRows[previousRowIndex]
-          //             .querySelectorAll(".content-card");
-          //     const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
-          //     previousRowCards[targetColumn].focus();
-          // }
-     }
+        // if (previousRowIndex >= 0) {
+        //     const previousRowCards =
+        //         movieRows[previousRowIndex]
+        //             .querySelectorAll(".content-card");
+        //     const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
+        //     previousRowCards[targetColumn].focus();
+        // }
+    }
 
-     if (event.code === "ArrowDown") {
-          let nextRowIndex = focusedRow + 1;
+    if (event.code === "ArrowDown") {
+        let nextRowIndex = focusedRow + 1;
 
-          while (nextRowIndex < movieRows.length) {
-               const nextRowCards = movieRows[nextRowIndex].querySelectorAll(".content-card");
+        while (nextRowIndex < movieRows.length) {
+            const nextRowCards = movieRows[nextRowIndex].querySelectorAll(".content-card");
 
-               if (nextRowCards.length === 0) {
-                    nextRowIndex++;
-                    continue;
-               }
+            if (nextRowCards.length === 0) {
+                nextRowIndex++;
+                continue;
+            }
 
-               const targetColumn = Math.min(focusedColumn, nextRowCards.length - 1);
+            const targetColumn = Math.min(focusedColumn, nextRowCards.length - 1);
 
-               nextRowCards[targetColumn].focus();
+            nextRowCards[targetColumn].focus();
 
-               break;
-          }
-     }
+            break;
+        }
+    }
 });
 
 function createMovieCard(movie) {
-     const card = document.createElement("div");
+    const card = document.createElement("div");
 
-     card.className = "content-card";
-     card.tabIndex = 0;
+    card.className = "content-card";
+    card.tabIndex = 0;
 
-     const poster = document.createElement("div");
+    const poster = document.createElement("div");
 
-     poster.className = "poster";
+    poster.className = "poster";
 
-     const image = document.createElement("img");
+    const image = document.createElement("img");
 
-     image.loading = "lazy";
-     image.alt = movie.title;
+    image.loading = "lazy";
+    image.alt = movie.title;
 
-     if (movie.thumbnail) {
-          image.src = movie.thumbnail;
-     }
+    if (movie.thumbnail) {
+        image.src = movie.thumbnail;
+    }
 
-     image.addEventListener("error", function () {
-          image.style.display = "none";
-     });
+    image.addEventListener("error", function () {
+        image.style.display = "none";
+    });
 
-     const title = document.createElement("div");
+    const title = document.createElement("div");
 
-     title.className = "card-title";
-     title.textContent = movie.title;
+    title.className = "card-title";
+    title.textContent = movie.title;
 
-     poster.appendChild(image);
+    poster.appendChild(image);
 
-     card.appendChild(poster);
-     card.appendChild(title);
+    card.appendChild(poster);
+    card.appendChild(title);
 
-     return card;
+    return card;
 }
 
 function renderPopularMovies(movies) {
-     popularMoviesRow.innerHTML = "";
+    popularMoviesRow.innerHTML = "";
 
-     const fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
 
-     movies.forEach(function (movieData) {
-          const movie = mapTmdbMovieToMovie(movieData);
+    movies.forEach(function (movieData) {
+        const movie = mapTmdbMovieToMovie(movieData);
 
-          if (!movie) {
-               return;
-          }
+        if (!movie) {
+            return;
+        }
 
-          const card = createMovieCard(movie);
+        const card = createMovieCard(movie);
 
-          fragment.appendChild(card);
-     });
+        fragment.appendChild(card);
+    });
 
-     popularMoviesRow.appendChild(fragment);
+    popularMoviesRow.appendChild(fragment);
 }
 
 function mapTmdbMovieToMovie(movie) {
-     if (!movie.title) {
-          return null;
-     }
+    if (!movie.title) {
+        return null;
+    }
 
-     return {
-          id: movie.id,
-          title: movie.title,
-          thumbnail: getPosterUrl(movie.poster_path),
-          description: movie.overview || "",
-     };
+    return {
+        id: movie.id,
+        title: movie.title,
+        thumbnail: getPosterUrl(movie.poster_path),
+        description: movie.overview || "",
+    };
 }
 
 function getPosterUrl(posterPath) {
-     if (!posterPath) {
-          return null;
-     }
+    if (!posterPath) {
+        return null;
+    }
 
-     return TMDB_CONFIG.imageBaseUrl + "/" + TMDB_CONFIG.posterSmall + posterPath;
+    return TMDB_CONFIG.imageBaseUrl + "/" + TMDB_CONFIG.posterSmall + posterPath;
 }
 
 const popularMoviesRow = document.querySelector("#popular-movies-row");
@@ -285,13 +285,13 @@ const popularMoviesLoading = document.querySelector("#popular-movies-loading");
 const popularMoviesError = document.querySelector("#popular-movies-error");
 
 function setPopularMoviesState(state, message = "") {
-     popularMoviesLoading.style.display = state === "loading" ? "block" : "none";
+    popularMoviesLoading.style.display = state === "loading" ? "block" : "none";
 
-     popularMoviesError.textContent = message;
+    popularMoviesError.textContent = message;
 
-     if (state === "loading") {
-          popularMoviesRow.innerHTML = "";
-     }
+    if (state === "loading") {
+        popularMoviesRow.innerHTML = "";
+    }
 }
 
 let popularMoviesCache = null;
@@ -302,91 +302,94 @@ const CACHE_TTL = 5 * 60 * 1000;
 let popularMoviesRequest = null;
 
 async function fetchPopularMovies() {
-     const cacheAge = Date.now() - popularMoviesCacheTime;
+    const cacheAge = Date.now() - popularMoviesCacheTime;
 
-     if (popularMoviesCache && cacheAge < CACHE_TTL) {
-          return popularMoviesCache;
-     }
+    if (popularMoviesCache && cacheAge < CACHE_TTL) {
+        return popularMoviesCache;
+    }
 
-     if (popularMoviesRequest) {
-          return popularMoviesRequest;
-     }
+    if (popularMoviesRequest) {
+        return popularMoviesRequest;
+    }
 
-     popularMoviesRequest = fetch(TMDB_CONFIG.baseUrl + "/movie/popular", {
-          headers: {
-               Authorization: "Bearer " + TMDB_CONFIG.token,
-               "Content-Type": "application/json",
-          },
-     });
+    popularMoviesRequest = fetch(TMDB_CONFIG.baseUrl + "/movie/popular", {
+        headers: {
+            Authorization: "Bearer " + TMDB_CONFIG.token,
+            "Content-Type": "application/json",
+        },
+    });
 
-     try {
-          const response = await popularMoviesRequest;
+    try {
+        const response = await popularMoviesRequest;
 
-          if (!response.ok) {
-               throw new Error("HTTP_" + response.status);
-          }
+        if (!response.ok) {
+            throw new Error("HTTP_" + response.status);
+        }
 
-          const data = await response.json();
+        const data = await response.json();
 
-          popularMoviesCache = data;
-          popularMoviesCacheTime = Date.now();
+        popularMoviesCache = data;
+        popularMoviesCacheTime = Date.now();
 
-          return data;
-     } finally {
-          popularMoviesRequest = null;
-     }
+        return data;
+    } finally {
+        popularMoviesRequest = null;
+    }
 }
 
 async function loadPopularMovies(retryCount = 0) {
-     try {
-          setPopularMoviesState("loading");
+    try {
+        setPopularMoviesState("loading");
 
-          const data = await fetchPopularMovies();
+        const data = await fetchPopularMovies();
 
-          if (data.results.length === 0) {
-               setPopularMoviesState("success", "No movies available.");
+        if (data.results.length === 0) {
+            setPopularMoviesState("success", "No movies available.");
 
-               return;
-          }
+            return;
+        }
 
-          setPopularMoviesState("success");
+        setPopularMoviesState("success");
 
-          renderPopularMovies(data.results);
+        renderPopularMovies(data.results);
 
-          movieCards = document.querySelectorAll(".content-card");
+        movieCards = document.querySelectorAll(".content-card");
 
-          movieRows = document.querySelectorAll(".content-row");
+        movieRows = document.querySelectorAll(".content-row");
 
-          const movie = mapTmdbMovieToMovie(data.results[0]);
+        const movie = mapTmdbMovieToMovie(data.results[0]);
 
-          if (movieCards.length > 0) {
-               movieCards[0].focus();
-          }
+        if (movieCards.length > 0) {
+            movieCards[0].focus();
+        }
 
-          console.log("TMDB movies loaded:", data.results.length);
+        console.log("TMDB movies loaded:", data.results.length);
 
-          console.log("First movie:", movie);
-     } catch (error) {
-          if (retryCount < 2) {
-               const delay = (retryCount + 1) * 1000;
+        console.log("First movie:", movie);
+    } catch (error) {
+        if (retryCount < 2) {
+            const delay = (retryCount + 1) * 1000;
 
-               console.log("Retrying TMDB request in", delay / 1000, "seconds");
+            console.log("Retrying TMDB request in", delay / 1000, "seconds");
 
-               await new Promise(function (resolve) {
-                    setTimeout(resolve, delay);
-               });
+            await new Promise(function (resolve) {
+                setTimeout(resolve, delay);
+            });
 
-               return loadPopularMovies(retryCount + 1);
-          }
+            return loadPopularMovies(retryCount + 1);
+        }
 
-          console.error("TMDB error:", error);
+        console.error("TMDB error:", error);
 
-          if (error.message.startsWith("HTTP_")) {
-               setPopularMoviesState("error", "Movie service is currently unavailable.");
-          } else {
-               setPopularMoviesState("error", "Unable to connect. Please check your internet connection.");
-          }
-     }
+        if (error.message.startsWith("HTTP_")) {
+            setPopularMoviesState("error", "Movie service is currently unavailable.");
+        } else {
+            setPopularMoviesState(
+                "error",
+                "Unable to connect. Please check your internet connection.",
+            );
+        }
+    }
 }
 
 loadPopularMovies();
