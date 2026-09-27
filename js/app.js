@@ -274,6 +274,11 @@ function renderProducts(movies) {
 
     movies.forEach(function (movieData) {
         const movie = mapTmdbMovieToMovie(movieData);
+
+        if (!movie) {
+            return;
+        }
+
         const card = createProductCard(movie);
 
         fragment.appendChild(card);
@@ -284,11 +289,15 @@ function renderProducts(movies) {
 
 
 function mapTmdbMovieToMovie(movie) {
+    if (!movie.title) {
+        return null;
+    }
+
     return {
         id: movie.id,
         title: movie.title,
         thumbnail: getPosterUrl(movie.poster_path),
-        description: movie.overview
+        description: movie.overview || ""
     };
 }
 
