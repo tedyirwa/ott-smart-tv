@@ -312,7 +312,7 @@ const apiLoading = document.querySelector("#api-loading");
 const apiError = document.querySelector("#api-error");
 
 
-async function loadMovies() {
+async function loadMovies(retryCount = 0) {
     try {
         apiLoading.style.display = "block";
         apiError.textContent = "";
@@ -328,7 +328,7 @@ async function loadMovies() {
         );
 
         if (!response.ok) {
-            throw new Error("TMDB HTTP error: " + response.status);
+            throw new Error("HTTP_" + response.status);
         }
 
         const data = await response.json();
@@ -357,10 +357,33 @@ async function loadMovies() {
         console.log("First movie:", movie);
 
     } catch (error) {
+        if (retryCount < 2) {
+            const delay = (retryCount + 1) * 1000;
+
+            console.log(
+                "Retrying TMDB request in",
+                delay / 1000,
+                "seconds"
+            );
+
+            await new Promise(function (resolve) {
+                setTimeout(resolve, delay);
+            });
+
+            return loadMovies(retryCount + 1);
+        }
+
         console.error("TMDB error:", error);
 
         apiLoading.style.display = "none";
-        apiError.textContent = "Error loading movies.";
+
+        if (error.message.startsWith("HTTP_")) {
+            apiError.textContent =
+                "Movie service is currently unavailable.";
+        } else {
+            apiError.textContent =
+                "Unable to connect. Please check your internet connection.";
+        }
     }
 }
 
