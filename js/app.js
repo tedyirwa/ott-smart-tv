@@ -269,7 +269,7 @@ let focusedColumn = 0;
 let movieCards = document.querySelectorAll(".content-card");
 
 // Mengambil semua row yang berisi movie card.
-const movieRows = document.querySelectorAll(".content-row");
+let movieRows = document.querySelectorAll(".content-row");
 
 
 // ============================================================
@@ -523,6 +523,7 @@ function createProductCard(movie) {
 
     const image = document.createElement("img");
     image.src = movie.thumbnail;
+    image.alt = movie.title;
 
     //Title Card
     const title = document.createElement("div");
@@ -610,12 +611,15 @@ async function loadMovies() {
         renderProducts(data.results);
 
         movieCards = document.querySelectorAll(".content-card");
+        movieRows = document.querySelectorAll(".content-row");
 
         const movie = mapTmdbMovieToMovie(data.results[0]);
+
         console.log("Mapped movie:", movie);
         console.log("First movie:", data.results[0]);
         console.log("TMDB response:", data);
         console.log("Movies:", data.results);
+
     } catch (error) {
         console.error("TMDB error:", error);
     }
