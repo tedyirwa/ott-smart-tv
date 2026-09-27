@@ -530,6 +530,10 @@ function createProductCard(movie) {
         image.src = movie.thumbnail;
     }
 
+    image.addEventListener("error", function () {
+        image.style.display = "none";
+    });
+
     //Title Card
     const title = document.createElement("div");
     title.className = "card-title";
