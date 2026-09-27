@@ -615,6 +615,10 @@ async function loadMovies() {
 
         const movie = mapTmdbMovieToMovie(data.results[0]);
 
+        if (movieCards.length > 0) {
+            movieCards[0].focus();
+        }
+
         console.log("Mapped movie:", movie);
         console.log("First movie:", data.results[0]);
         console.log("TMDB response:", data);
