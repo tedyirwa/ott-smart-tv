@@ -522,8 +522,11 @@ function createProductCard(movie) {
     poster.className = "poster";
 
     const image = document.createElement("img");
-    image.src = movie.thumbnail;
+
+    image.loading = "lazy";
     image.alt = movie.title;
+
+    image.src = movie.thumbnail;
 
     //Title Card
     const title = document.createElement("div");
