@@ -325,15 +325,8 @@ const popularMoviesError =
 
 
 function setPopularMoviesState(state, message = "") {
-    console.log("Setting popular movies state:", state, message);
-
     popularMoviesLoading.style.display =
         state === "loading" ? "block" : "none";
-
-    console.log(
-        "popularMoviesLoading.style.display:",
-        popularMoviesLoading.style.display
-    );
 
     popularMoviesError.textContent = message;
 
@@ -363,8 +356,6 @@ async function fetchPopularMovies() {
     }
 
     if (popularMoviesRequest) {
-        console.log("Using existing popular movies request");
-
         return popularMoviesRequest;
     }
 
@@ -399,11 +390,8 @@ async function fetchPopularMovies() {
 
 
 async function loadPopularMovies(retryCount = 0) {
-
     try {
         setPopularMoviesState("loading");
-
-        console.log("Fetching popular movies from TMDB...");
 
         const data = await fetchPopularMovies();
 
@@ -416,24 +404,15 @@ async function loadPopularMovies(retryCount = 0) {
             return;
         }
 
-        console.log(
-            "TMDB data fetched:",
-            data.results.length,
-            "movies"
-        );
-
         setPopularMoviesState("success");
 
         renderPopularMovies(data.results);
 
-        movieCards =
-            document.querySelectorAll(".content-card");
+        movieCards = document.querySelectorAll(".content-card");
 
-        movieRows =
-            document.querySelectorAll(".content-row");
+        movieRows = document.querySelectorAll(".content-row");
 
-        const movie =
-            mapTmdbMovieToMovie(data.results[0]);
+        const movie = mapTmdbMovieToMovie(data.results[0]);
 
         if (movieCards.length > 0) {
             movieCards[0].focus();
