@@ -571,7 +571,11 @@ function mapTmdbMovieToMovie(movie) {
     return {
         id: movie.id,
         title: movie.title,
-        thumbnail: TMDB_CONFIG.imageBaseUrl + movie.poster_path,
+        thumbnail:
+            TMDB_CONFIG.imageBaseUrl +
+            "/" +
+            TMDB_CONFIG.posterSmall +
+            movie.poster_path,
         description: movie.overview
     };
 }
