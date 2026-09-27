@@ -538,14 +538,20 @@ function createProductCard(movie) {
 }
 
 function renderProducts(movies) {
+
     apiRow.innerHTML = "";
 
+    const fragment = document.createDocumentFragment();
+
     movies.forEach(function (movieData) {
+
         const movie = mapTmdbMovieToMovie(movieData);
         const card = createProductCard(movie);
 
-        apiRow.appendChild(card);
+        fragment.appendChild(card);
     });
+
+    apiRow.appendChild(fragment);
 }
 
 function mapProductToMovie(product) {
