@@ -115,6 +115,18 @@ document.addEventListener("focusin", function () {
     });
 });
 
+function restoreFocus() {
+    const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+
+    if (rowCards.length === 0) {
+        return;
+    }
+
+    const targetColumn = Math.min(focusedColumn, rowCards.length - 1);
+
+    rowCards[targetColumn].focus();
+}
+
 // Helper function to keep the focused card visible within the row
 function keepFocusedCardVisible(row, card) {
     const rowRect = row.getBoundingClientRect();
@@ -131,6 +143,10 @@ function keepFocusedCardVisible(row, card) {
 
 // Remote
 function handleNavigation(event) {
+    if (event.repeat) {
+        return;
+    }
+
     if (event.code === "ArrowRight") {
         moveRight();
     }
