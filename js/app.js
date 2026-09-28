@@ -76,7 +76,6 @@ videoPlayer.addEventListener("error", function () {
 
     if (videoPlayer.error) {
         console.error("Error code:", videoPlayer.error.code);
-
         console.error("Error message:", videoPlayer.error.message);
     }
 });
@@ -99,7 +98,6 @@ let focusedRow = 0;
 let focusedColumn = 0;
 
 let movieCards = document.querySelectorAll(".content-card");
-
 let movieRows = document.querySelectorAll(".content-row");
 
 document.addEventListener("focusin", function () {
@@ -142,6 +140,7 @@ function keepFocusedCardVisible(row, card) {
 }
 
 // Remote
+
 function handleNavigation(event) {
     if (document.activeElement === movieSearchInput) {
         return;
@@ -175,6 +174,11 @@ function handleNavigation(event) {
     if (event.code === "ArrowDown") {
         moveDown();
     }
+
+    if (event.code === "Enter") {
+        selectFocusedMovie();
+        return;
+    }
 }
 
 function moveRight() {
@@ -187,11 +191,9 @@ function moveRight() {
     const rowCards = currentRow.querySelectorAll(".content-card");
     const nextColumn = focusedColumn + 1;
 
-    // Masih ada card berikutnya
     if (nextColumn < rowCards.length) {
         rowCards[nextColumn].focus();
 
-        // Prefetch page berikutnya saat mendekati ujung
         if (currentRow === popularMoviesRow && focusedColumn >= rowCards.length - 3) {
             loadNextPopularMovies();
         }
@@ -203,7 +205,6 @@ function moveRight() {
         return;
     }
 
-    // Sudah di ujung Popular
     if (currentRow === popularMoviesRow) {
         loadNextPopularMovies().then(function () {
             const updatedRowCards = popularMoviesRow.querySelectorAll(".content-card");
@@ -216,7 +217,6 @@ function moveRight() {
         return;
     }
 
-    // Sudah di ujung Top Rated
     if (currentRow === topRatedMoviesRow) {
         loadNextTopRatedMovies().then(function () {
             const updatedRowCards = topRatedMoviesRow.querySelectorAll(".content-card");
@@ -276,6 +276,24 @@ function moveDown() {
     }
 }
 
+function selectFocusedMovie() {
+    const focusedCard = document.activeElement;
+
+    if (!focusedCard.classList.contains("content-card")) {
+        return;
+    }
+
+    const movieId = focusedCard.dataset.movieId;
+
+    if (!movieId) {
+        return;
+    }
+
+    console.log("Opening movie detail:", movieId);
+
+    window.location.href = "movie-detail.html?id=" + movieId;
+}
+
 document.addEventListener("keydown", handleNavigation);
 
 // Movie Card
@@ -285,6 +303,7 @@ function createMovieCard(movie) {
 
     card.className = "content-card";
     card.tabIndex = 0;
+    card.dataset.movieId = movie.id;
 
     const poster = document.createElement("div");
 
@@ -391,7 +410,6 @@ async function fetchTopRatedMovies(page = 1) {
     const response = await fetch(TMDB_CONFIG.baseUrl + "/movie/top_rated?page=" + page, {
         headers: {
             Authorization: "Bearer " + TMDB_CONFIG.token,
-
             "Content-Type": "application/json",
         },
     });
@@ -430,7 +448,6 @@ async function loadTopRatedMovies(retryCount = 0) {
         const data = await fetchTopRatedMovies(1);
 
         topRatedMoviesPage = 1;
-
         topRatedMoviesTotalPages = data.total_pages;
 
         setTopRatedMoviesState("success");
@@ -444,7 +461,6 @@ async function loadTopRatedMovies(retryCount = 0) {
         renderTopRatedMovies(data.results);
 
         movieCards = document.querySelectorAll(".content-card");
-
         movieRows = document.querySelectorAll(".content-row");
     } catch (error) {
         if (retryCount < 2) {
@@ -550,7 +566,6 @@ const CACHE_TTL = 5 * 60 * 1000;
 
 function getCachedPopularMovies(page) {
     const cachedMovies = popularMoviesCache[page];
-
     const cachedTime = popularMoviesCacheTime[page];
 
     if (!cachedMovies || !cachedTime) {
@@ -568,7 +583,6 @@ function getCachedPopularMovies(page) {
 
 function setPopularMoviesCache(page, data) {
     popularMoviesCache[page] = data;
-
     popularMoviesCacheTime[page] = Date.now();
 }
 
@@ -582,7 +596,6 @@ async function fetchPopularMovies(page = 1) {
     const response = await fetch(TMDB_CONFIG.baseUrl + "/movie/popular?page=" + page, {
         headers: {
             Authorization: "Bearer " + TMDB_CONFIG.token,
-
             "Content-Type": "application/json",
         },
     });
@@ -655,7 +668,6 @@ async function loadPopularMovies(retryCount = 0) {
         const data = await getPopularMovies(1);
 
         popularMoviesPage = 1;
-
         popularMoviesTotalPages = data.total_pages;
 
         if (data.results.length === 0) {
@@ -669,7 +681,6 @@ async function loadPopularMovies(retryCount = 0) {
         renderPopularMovies(data.results);
 
         movieCards = document.querySelectorAll(".content-card");
-
         movieRows = document.querySelectorAll(".content-row");
 
         if (movieCards.length > 0) {
@@ -778,7 +789,6 @@ async function fetchSearchMovies(query) {
         {
             headers: {
                 Authorization: "Bearer " + TMDB_CONFIG.token,
-
                 "Content-Type": "application/json",
             },
         },
@@ -811,7 +821,6 @@ function renderSearchMovies(movies) {
     searchMoviesRow.appendChild(fragment);
 
     movieCards = document.querySelectorAll(".content-card");
-
     movieRows = document.querySelectorAll(".content-row");
 }
 
@@ -832,6 +841,7 @@ async function searchMovies(query) {
             searchMoviesRow.innerHTML = "";
             searchMoviesLoading.style.display = "none";
             searchMoviesError.textContent = "No movies found.";
+
             return;
         }
 

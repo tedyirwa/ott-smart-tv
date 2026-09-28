@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movie Detail</title>
+
+    <link rel="stylesheet" href="Css/style.css">
+</head>
+
+<body>
+
+    <main class="movie-detail-page" id="movie-detail-page">
+
+        <div class="movie-detail-loading" id="movie-detail-loading">
+            Loading movie...
+        </div>
+        
+        <div class="movie-detail-error" id="movie-detail-error">
+        </div>
+
+        <div class="movie-detail-content">
+
+            <img class="movie-detail-poster" id="movie-detail-poster" src="" alt="">
+
+            <div class="movie-detail-info">
+
+                <h1 id="movie-detail-title"></h1>
+
+                <div class="movie-detail-meta">
+                    <span id="movie-detail-rating"></span>
+                    <span id="movie-detail-release-date"></span>
+                    <span id="movie-detail-runtime"></span>
+                </div>
+
+                <p id="movie-detail-description"></p>
+
+                <button class="movie-detail-back" id="movie-detail-back">
+                    BACK
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/config.js"></script>
+    <script type="module" src="js/movie-detail.js"></script>
+
+</body>
+
+</html>
