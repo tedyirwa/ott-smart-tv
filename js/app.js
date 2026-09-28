@@ -115,6 +115,20 @@ document.addEventListener("focusin", function () {
     });
 });
 
+// Helper function to keep the focused card visible within the row
+function keepFocusedCardVisible(row, card) {
+    const rowRect = row.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+
+    if (cardRect.right > rowRect.right) {
+        row.scrollLeft += cardRect.right - rowRect.right;
+    }
+
+    if (cardRect.left < rowRect.left) {
+        row.scrollLeft -= rowRect.left - cardRect.left;
+    }
+}
+
 document.addEventListener("keydown", function (event) {
     if (event.code === "Space") {
         if (videoPlayer.paused) {
