@@ -208,10 +208,13 @@ function createMovieCard(movie) {
 
     if (movie.thumbnail) {
         image.src = movie.thumbnail;
+    } else {
+        poster.textContent = "No Image";
     }
 
     image.addEventListener("error", function () {
         image.style.display = "none";
+        poster.textContent = "No Image";
     });
 
     const title = document.createElement("div");
@@ -240,12 +243,12 @@ function mapTmdbMovieToMovie(movie) {
     };
 }
 
-function getPosterUrl(posterPath) {
+function getPosterUrl(posterPath, size = TMDB_CONFIG.posterSmall) {
     if (!posterPath) {
         return null;
     }
 
-    return TMDB_CONFIG.imageBaseUrl + "/" + TMDB_CONFIG.posterSmall + posterPath;
+    return TMDB_CONFIG.imageBaseUrl + "/" + size + posterPath;
 }
 
 // Top Rated Movies
