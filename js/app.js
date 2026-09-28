@@ -143,6 +143,19 @@ function keepFocusedCardVisible(row, card) {
 
 // Remote
 function handleNavigation(event) {
+    if (document.activeElement === movieSearchInput) {
+        return;
+    }
+
+    if (
+        event.code === "ArrowRight" ||
+        event.code === "ArrowLeft" ||
+        event.code === "ArrowUp" ||
+        event.code === "ArrowDown"
+    ) {
+        event.preventDefault();
+    }
+
     if (event.repeat) {
         return;
     }
@@ -165,18 +178,55 @@ function handleNavigation(event) {
 }
 
 function moveRight() {
-    const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+    const currentRow = movieRows[focusedRow];
 
-    if (focusedRow === 0 && focusedColumn >= rowCards.length - 3) {
-        loadNextPopularMovies();
+    if (!currentRow) {
+        return;
     }
 
-    if (focusedRow === 1 && focusedColumn >= rowCards.length - 3) {
-        loadNextTopRatedMovies();
+    const rowCards = currentRow.querySelectorAll(".content-card");
+    const nextColumn = focusedColumn + 1;
+
+    // Masih ada card berikutnya
+    if (nextColumn < rowCards.length) {
+        rowCards[nextColumn].focus();
+
+        // Prefetch page berikutnya saat mendekati ujung
+        if (currentRow === popularMoviesRow && focusedColumn >= rowCards.length - 3) {
+            loadNextPopularMovies();
+        }
+
+        if (currentRow === topRatedMoviesRow && focusedColumn >= rowCards.length - 3) {
+            loadNextTopRatedMovies();
+        }
+
+        return;
     }
 
-    if (focusedColumn < rowCards.length - 1) {
-        rowCards[focusedColumn + 1].focus();
+    // Sudah di ujung Popular
+    if (currentRow === popularMoviesRow) {
+        loadNextPopularMovies().then(function () {
+            const updatedRowCards = popularMoviesRow.querySelectorAll(".content-card");
+
+            if (nextColumn < updatedRowCards.length) {
+                updatedRowCards[nextColumn].focus();
+            }
+        });
+
+        return;
+    }
+
+    // Sudah di ujung Top Rated
+    if (currentRow === topRatedMoviesRow) {
+        loadNextTopRatedMovies().then(function () {
+            const updatedRowCards = topRatedMoviesRow.querySelectorAll(".content-card");
+
+            if (nextColumn < updatedRowCards.length) {
+                updatedRowCards[nextColumn].focus();
+            }
+        });
+
+        return;
     }
 }
 
@@ -390,55 +440,61 @@ async function loadTopRatedMovies(retryCount = 0) {
     }
 }
 
+let topRatedMoviesLoadingPromise = null;
+
 async function loadNextTopRatedMovies() {
-    if (topRatedMoviesLoadingMore) {
-        return;
+    if (topRatedMoviesLoadingPromise) {
+        return topRatedMoviesLoadingPromise;
     }
 
     if (topRatedMoviesPage >= topRatedMoviesTotalPages) {
-        return;
+        return null;
     }
-
-    topRatedMoviesLoadingMore = true;
 
     const nextPage = topRatedMoviesPage + 1;
 
-    try {
-        console.log("Loading top rated movies page:", nextPage);
+    topRatedMoviesLoadingPromise = (async function () {
+        try {
+            console.log("Loading top rated movies page:", nextPage);
 
-        const data = await fetchTopRatedMovies(nextPage);
+            const data = await fetchTopRatedMovies(nextPage);
 
-        if (data.results.length === 0) {
-            topRatedMoviesPage = topRatedMoviesTotalPages;
-
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        data.results.forEach(function (movieData) {
-            const movie = mapTmdbMovieToMovie(movieData);
-
-            if (!movie) {
+            if (data.results.length === 0) {
+                topRatedMoviesPage = topRatedMoviesTotalPages;
                 return;
             }
 
-            const card = createMovieCard(movie);
+            const fragment = document.createDocumentFragment();
 
-            fragment.appendChild(card);
-        });
+            data.results.forEach(function (movieData) {
+                const movie = mapTmdbMovieToMovie(movieData);
 
-        topRatedMoviesRow.appendChild(fragment);
+                if (!movie) {
+                    return;
+                }
 
-        topRatedMoviesPage = nextPage;
+                const card = createMovieCard(movie);
 
-        movieCards = document.querySelectorAll(".content-card");
+                fragment.appendChild(card);
+            });
 
-        movieRows = document.querySelectorAll(".content-row");
-    } catch (error) {
-        console.error("Error loading top rated movies page:", nextPage, error);
+            topRatedMoviesRow.appendChild(fragment);
+
+            topRatedMoviesPage = nextPage;
+
+            movieCards = document.querySelectorAll(".content-card");
+            movieRows = document.querySelectorAll(".content-row");
+        } catch (error) {
+            console.error("Error loading top rated movies page:", nextPage, error);
+
+            throw error;
+        }
+    })();
+
+    try {
+        return await topRatedMoviesLoadingPromise;
     } finally {
-        topRatedMoviesLoadingMore = false;
+        topRatedMoviesLoadingPromise = null;
     }
 }
 
@@ -620,56 +676,189 @@ async function loadPopularMovies(retryCount = 0) {
     }
 }
 
+let popularMoviesLoadingPromise = null;
+
 async function loadNextPopularMovies() {
-    if (popularMoviesLoadingMore) {
-        return;
+    if (popularMoviesLoadingPromise) {
+        return popularMoviesLoadingPromise;
     }
 
     if (popularMoviesPage >= popularMoviesTotalPages) {
-        return;
+        return null;
     }
-
-    popularMoviesLoadingMore = true;
 
     const nextPage = popularMoviesPage + 1;
 
-    try {
-        console.log("Loading popular movies page:", nextPage);
+    popularMoviesLoadingPromise = (async function () {
+        try {
+            console.log("Loading popular movies page:", nextPage);
 
-        const data = await getPopularMovies(nextPage);
+            const data = await getPopularMovies(nextPage);
 
-        if (data.results.length === 0) {
-            popularMoviesPage = popularMoviesTotalPages;
-
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        data.results.forEach(function (movieData) {
-            const movie = mapTmdbMovieToMovie(movieData);
-
-            if (!movie) {
+            if (data.results.length === 0) {
+                popularMoviesPage = popularMoviesTotalPages;
                 return;
             }
 
-            const card = createMovieCard(movie);
+            const fragment = document.createDocumentFragment();
 
-            fragment.appendChild(card);
-        });
+            data.results.forEach(function (movieData) {
+                const movie = mapTmdbMovieToMovie(movieData);
 
-        popularMoviesRow.appendChild(fragment);
+                if (!movie) {
+                    return;
+                }
 
-        popularMoviesPage = nextPage;
+                const card = createMovieCard(movie);
 
-        movieCards = document.querySelectorAll(".content-card");
+                fragment.appendChild(card);
+            });
 
-        movieRows = document.querySelectorAll(".content-row");
-    } catch (error) {
-        console.error("Error loading popular movies page:", nextPage, error);
+            popularMoviesRow.appendChild(fragment);
+
+            popularMoviesPage = nextPage;
+
+            movieCards = document.querySelectorAll(".content-card");
+            movieRows = document.querySelectorAll(".content-row");
+        } catch (error) {
+            console.error("Error loading popular movies page:", nextPage, error);
+
+            throw error;
+        }
+    })();
+
+    try {
+        return await popularMoviesLoadingPromise;
     } finally {
-        popularMoviesLoadingMore = false;
+        popularMoviesLoadingPromise = null;
     }
+}
+
+// Movie Search
+
+const movieSearchInput = document.querySelector("#movie-search-input");
+
+const searchMoviesLoading = document.querySelector("#search-movies-loading");
+
+const searchMoviesError = document.querySelector("#search-movies-error");
+
+const searchMoviesRow = document.querySelector("#search-movies-row");
+
+let searchTimeout = null;
+let searchRequestId = 0;
+
+async function fetchSearchMovies(query) {
+    const response = await fetch(
+        TMDB_CONFIG.baseUrl + "/search/movie?query=" + encodeURIComponent(query),
+        {
+            headers: {
+                Authorization: "Bearer " + TMDB_CONFIG.token,
+
+                "Content-Type": "application/json",
+            },
+        },
+    );
+
+    if (!response.ok) {
+        throw new Error("HTTP_" + response.status);
+    }
+
+    return response.json();
+}
+
+function renderSearchMovies(movies) {
+    searchMoviesRow.innerHTML = "";
+
+    const fragment = document.createDocumentFragment();
+
+    movies.forEach(function (movieData) {
+        const movie = mapTmdbMovieToMovie(movieData);
+
+        if (!movie) {
+            return;
+        }
+
+        const card = createMovieCard(movie);
+
+        fragment.appendChild(card);
+    });
+
+    searchMoviesRow.appendChild(fragment);
+
+    movieCards = document.querySelectorAll(".content-card");
+
+    movieRows = document.querySelectorAll(".content-row");
+}
+
+async function searchMovies(query) {
+    const requestId = ++searchRequestId;
+
+    try {
+        searchMoviesLoading.style.display = "block";
+        searchMoviesError.textContent = "";
+
+        const data = await fetchSearchMovies(query);
+
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
+        if (data.results.length === 0) {
+            searchMoviesRow.innerHTML = "";
+            searchMoviesLoading.style.display = "none";
+            searchMoviesError.textContent = "No movies found.";
+            return;
+        }
+
+        searchMoviesLoading.style.display = "none";
+
+        renderSearchMovies(data.results);
+
+        focusFirstSearchResult();
+    } catch (error) {
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
+        console.error("Search movies error:", error);
+
+        searchMoviesLoading.style.display = "none";
+        searchMoviesError.textContent = "Unable to search movies.";
+    }
+}
+
+function debounceSearch(query) {
+    clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(function () {
+        searchMovies(query);
+    }, 300);
+}
+
+movieSearchInput.addEventListener("input", function () {
+    const query = movieSearchInput.value.trim();
+
+    if (query.length === 0) {
+        clearTimeout(searchTimeout);
+
+        searchMoviesRow.innerHTML = "";
+        searchMoviesError.textContent = "";
+        searchMoviesLoading.style.display = "none";
+
+        return;
+    }
+
+    debounceSearch(query);
+});
+
+function focusFirstSearchResult() {
+    const searchCards = searchMoviesRow.querySelectorAll(".content-card");
+
+    if (searchCards.length === 0) {
+        return;
+    }
+
+    searchCards[0].focus();
 }
 
 // Initial Load
