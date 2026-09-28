@@ -129,79 +129,88 @@ function keepFocusedCardVisible(row, card) {
     }
 }
 
-document.addEventListener("keydown", function (event) {
-    if (event.code === "Space") {
-        if (videoPlayer.paused) {
-            videoPlayer.play();
-        } else {
-            videoPlayer.pause();
-        }
-    }
-
+// Remote
+function handleNavigation(event) {
     if (event.code === "ArrowRight") {
-        const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
-
-        // Popular Movies
-        if (focusedRow === 0 && focusedColumn >= rowCards.length - 3) {
-            loadNextPopularMovies();
-        }
-
-        // Top Rated Movies
-        if (focusedRow === 1 && focusedColumn >= rowCards.length - 3) {
-            loadNextTopRatedMovies();
-        }
-
-        if (focusedColumn < rowCards.length - 1) {
-            rowCards[focusedColumn + 1].focus();
-        }
+        moveRight();
     }
 
     if (event.code === "ArrowLeft") {
-        const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
-
-        if (focusedColumn > 0) {
-            rowCards[focusedColumn - 1].focus();
-        }
+        moveLeft();
     }
 
     if (event.code === "ArrowUp") {
-        let previousRowIndex = focusedRow - 1;
-
-        while (previousRowIndex >= 0) {
-            const previousRowCards = movieRows[previousRowIndex].querySelectorAll(".content-card");
-
-            if (previousRowCards.length === 0) {
-                previousRowIndex--;
-                continue;
-            }
-
-            const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
-
-            previousRowCards[targetColumn].focus();
-
-            break;
-        }
+        moveUp();
     }
 
     if (event.code === "ArrowDown") {
-        let nextRowIndex = focusedRow + 1;
-
-        while (nextRowIndex < movieRows.length) {
-            const nextRowCards = movieRows[nextRowIndex].querySelectorAll(".content-card");
-
-            if (nextRowCards.length === 0) {
-                nextRowIndex++;
-                continue;
-            }
-
-            const targetColumn = Math.min(focusedColumn, nextRowCards.length - 1);
-
-            nextRowCards[targetColumn].focus();
-
-            break;
-        }
+        moveDown();
     }
-});
+}
+
+function moveRight() {
+    const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+
+    if (focusedRow === 0 && focusedColumn >= rowCards.length - 3) {
+        loadNextPopularMovies();
+    }
+
+    if (focusedRow === 1 && focusedColumn >= rowCards.length - 3) {
+        loadNextTopRatedMovies();
+    }
+
+    if (focusedColumn < rowCards.length - 1) {
+        rowCards[focusedColumn + 1].focus();
+    }
+}
+
+function moveLeft() {
+    const rowCards = movieRows[focusedRow].querySelectorAll(".content-card");
+
+    if (focusedColumn > 0) {
+        rowCards[focusedColumn - 1].focus();
+    }
+}
+
+function moveUp() {
+    let previousRowIndex = focusedRow - 1;
+
+    while (previousRowIndex >= 0) {
+        const previousRowCards = movieRows[previousRowIndex].querySelectorAll(".content-card");
+
+        if (previousRowCards.length === 0) {
+            previousRowIndex--;
+            continue;
+        }
+
+        const targetColumn = Math.min(focusedColumn, previousRowCards.length - 1);
+
+        previousRowCards[targetColumn].focus();
+
+        break;
+    }
+}
+
+function moveDown() {
+    let nextRowIndex = focusedRow + 1;
+
+    while (nextRowIndex < movieRows.length) {
+        const nextRowCards = movieRows[nextRowIndex].querySelectorAll(".content-card");
+
+        if (nextRowCards.length === 0) {
+            nextRowIndex++;
+            continue;
+        }
+
+        const targetColumn = Math.min(focusedColumn, nextRowCards.length - 1);
+
+        nextRowCards[targetColumn].focus();
+
+        break;
+    }
+}
+
+document.addEventListener("keydown", handleNavigation);
 
 // Movie Card
 
