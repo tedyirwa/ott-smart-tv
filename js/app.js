@@ -297,21 +297,46 @@ function createMovieCard(movie) {
 
     if (movie.thumbnail) {
         image.src = movie.thumbnail;
-    } else {
-        poster.textContent = "No Image";
-    }
 
-    image.addEventListener("error", function () {
-        image.style.display = "none";
-        poster.textContent = "No Image";
-    });
+        image.addEventListener("error", function () {
+            image.style.display = "none";
+
+            poster.classList.add("poster-error");
+
+            const fallbackIcon = document.createElement("div");
+            fallbackIcon.className = "poster-error-icon";
+            fallbackIcon.textContent = "🖼️";
+
+            const fallbackText = document.createElement("div");
+            fallbackText.className = "poster-error-text";
+            fallbackText.textContent = "No Image";
+
+            poster.appendChild(fallbackIcon);
+            poster.appendChild(fallbackText);
+        });
+    } else {
+        poster.classList.add("poster-error");
+
+        const fallbackIcon = document.createElement("div");
+        fallbackIcon.className = "poster-error-icon";
+        fallbackIcon.textContent = "🖼️";
+
+        const fallbackText = document.createElement("div");
+        fallbackText.className = "poster-error-text";
+        fallbackText.textContent = "No Image";
+
+        poster.appendChild(fallbackIcon);
+        poster.appendChild(fallbackText);
+    }
 
     const title = document.createElement("div");
 
     title.className = "card-title";
     title.textContent = movie.title;
 
-    poster.appendChild(image);
+    if (movie.thumbnail) {
+        poster.appendChild(image);
+    }
 
     card.appendChild(poster);
     card.appendChild(title);
